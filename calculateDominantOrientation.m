@@ -1,4 +1,4 @@
-function [dominantDirections, Locaciones] = calculateDominantOrientation(octavecount,minlevel,maxlevel,GLA,LLKP)
+function [dominantDirections, Locaciones] = calculateDominantOrientation(octavecount,minlevel,GLA,LLKP)
 Locaciones=[];
 dominantDirections = [];
            
