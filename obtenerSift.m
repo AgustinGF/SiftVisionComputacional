@@ -20,14 +20,14 @@ tic;
     numGaussianas = maxlevel+2;
     numLaplacianos = maxlevel+1;
     %Obteniendo la Primera Octava
-    GL1=zeros(numGaussianas,H,W);
+    GL1=zeros(5,H,W);
    
-    for i=1:numGaussianas
+    for i=1:5
         GL1(i,:,:)= imgaussfilt(F,(kvalue^i)*sigma);
     end
     %Laplacianos de primera Octava
-    LL1=zeros(numLaplacianos,H,W);
-    for i=1:numLaplacianos
+    LL1=zeros(4,H,W);
+    for i=1:4
         LL1(i,:,:)= GL1(i,:,:)-GL1(i+1,:,:);
     end
 %-------------------------------------------------
@@ -38,13 +38,13 @@ tic;
     F2=uint8(Z2({yQ,xQ}));
     [H2,W2]=size(F2);
 %   Obteniendo la Segunda Octava
-    GL2=zeros(numGaussianas,H2,W2);
-    for i=1:numGaussianas
+    GL2=zeros(5,H2,W2);
+    for i=1:5
         GL2(i,:,:)= imgaussfilt(F2,(kvalue^i)*sigma);
     end
 %   Laplacianos de Segunda Octava
-    LL2=zeros(numLaplacianos,H2,W2);
-    for i=1:numLaplacianos
+    LL2=zeros(4,H2,W2);
+    for i=1:4
         LL2(i,:,:)= GL2(i,:,:)-GL2(i+1,:,:);
     end
 %-----------------------------------------------------
@@ -55,13 +55,13 @@ tic;
     F3=uint8(Z3({yQ,xQ}));
     [H3,W3]=size(F3);
 %   Obteniendo la Tercera Octava
-    GL3=zeros(numGaussianas,H3,W3);
-    for i=1:numGaussianas
+    GL3=zeros(5,H3,W3);
+    for i=1:5
         GL3(i,:,:)= imgaussfilt(F3,(kvalue^i)*sigma);
     end
 %   Laplacianos de Tercera Octava
-    LL3=zeros(numLaplacianos,H3,W3);
-    for i=1:numLaplacianos
+    LL3=zeros(4,H3,W3);
+    for i=1:4
         LL3(i,:,:)= GL3(i,:,:)-GL3(i+1,:,:);
     end
 %-----------------------------------------------------------
@@ -72,13 +72,13 @@ tic;
     F4=uint8(Z4({yQ,xQ}));
     [H4,W4]=size(F4);
 %   Obteniendo la Cuarta Octava
-    GL4=zeros(numGaussianas,H4,W4);
-    for i=1:numGaussianas
+    GL4=zeros(5,H4,W4);
+    for i=1:5
         GL4(i,:,:)= imgaussfilt(F4,(kvalue^i)*sigma);
     end
 %   Laplacianos de Cuarta Octava
-    LL4=zeros(numLaplacianos,H4,W4);
-    for i=1:numLaplacianos
+    LL4=zeros(4,H4,W4);
+    for i=1:4
         LL4(i,:,:)= GL4(i,:,:)-GL4(i+1,:,:);
     end
 %-----------------------------------------------------------    
@@ -89,8 +89,8 @@ tic;
     F5=uint8(Z5({yQ,xQ}));
     [H5,W5]=size(F5);
 %   Obteniendo la Quinta Octava
-    GL5=zeros(numGaussianas,H5,W5);
-    for i=1:numGaussianas
+    GL5=zeros(5,H5,W5);
+    for i=1:5
         GL5(i,:,:)= imgaussfilt(F5,(kvalue^i)*sigma);
     end
 %   Laplacianos de Quinta Octava
@@ -110,7 +110,7 @@ minQuality=.3;
     LL1=(1/(LLmax-LLmin))*(LL1-LLmin);
     LL1KP=zeros(H,W,4);
     mostrarLL1KP=cornerPoints([1,1]);
-    for i=1:maxlevel
+    for i=1:4
         aux=reshape(LL1(i,:,:),size(F));
         aux2=detectFASTFeatures(aux,'MinQuality',minQuality,'MinContrast',minContrast);
 %         aux2=selectStrongest(aux2,5);   
@@ -131,7 +131,7 @@ minQuality=.3;
     LL2=(1/(LLmax-LLmin))*(LL2-LLmin);
     LL2KP=zeros(H2,W2,4);
     mostrarLL2KP=cornerPoints([1,1]);
-    for i=1:maxlevel
+    for i=1:4
         aux=reshape(LL2(i,:,:),size(F2));
         aux2=detectFASTFeatures(aux,'MinQuality',minQuality,'MinContrast',minContrast);
 %         aux2=selectStrongest(aux2,5);  
@@ -152,7 +152,7 @@ minQuality=.3;
     LL3=(1/(LLmax-LLmin))*(LL3-LLmin);
     LL3KP=zeros(H3,W3,4);
     mostrarLL3KP=cornerPoints([1,1]);
-    for i=1:maxlevel
+    for i=1:4
         aux=reshape(LL3(i,:,:),size(F3));
         aux2=detectFASTFeatures(aux,'MinQuality',minQuality,'MinContrast',minContrast);
 %          aux2=selectStrongest(aux2,5);  
@@ -173,7 +173,7 @@ minQuality=.3;
     LL4=(1/(LLmax-LLmin))*(LL4-LLmin);
     LL4KP=zeros(H4,W4,4);
     mostrarLL4KP=cornerPoints([1,1]);
-    for i=1:maxlevel
+    for i=1:4
         aux=reshape(LL4(i,:,:),size(F4));
         aux2=detectFASTFeatures(aux,'MinQuality',minQuality,'MinContrast',minContrast);
 %          aux2=selectStrongest(aux2,5); 
@@ -193,7 +193,7 @@ minQuality=.3;
     LL5=(1/(LLmax-LLmin))*(LL5-LLmin);
     LL5KP=zeros(H5,W5,4);
     mostrarLL5KP=cornerPoints([1,1]);
-    for i=1:maxlevel
+    for i=1:4
         aux=reshape(LL5(i,:,:),size(F5));
         aux2=detectFASTFeatures(aux,'MinQuality',minQuality,'MinContrast',minContrast);
 %          aux2=selectStrongest(aux2,5); 
@@ -235,7 +235,7 @@ GLA={GL1,GL2,GL3,GL4,GL5};
 %     for centerlevel = minlevel+1 : maxlevel
 %         for i = 2: HL - 1
 %             for j = 2: WL -1
-%                 if findextrema2(LL1, i, j, centerlevel) == 1
+%                 if findextrema(LL1, i, j, centerlevel) == 1
 %                     LLKP(i,j, centerlevel) = 1;
 %                 end
 %             end
@@ -255,19 +255,18 @@ GLA={GL1,GL2,GL3,GL4,GL5};
 
 % 
 % 
-%[KP] = harrisCornerRejection(LLA,octavas,KP,minlevel);
-%tiempo = toc;
-%disp(['Tiempo en harris = ' num2str(tiempo)]);
+% [KP] = harrisCornerRejection(LLA,octavas,KP,minlevel);
+% tiempo = toc;
+% disp(['Tiempo en harris = ' num2str(tiempo)]);
 % 
 % displayKeypoints(imagenes, Locaciones, octavas,minlevel,maxlevel,length1);
 
 % [dominantDirections, Locaciones]= calculateDominantOrientation(octavas,minlevel,GLA,KP);
 % tiempo = toc;
 % disp(['Tiempo en orientacion = ' num2str(tiempo)]);
+%displayKeypointsDirections(F,dominantDirections,Locaciones);
 
-% displayKeypointsDirections(F,dominantDirections,Locaciones);
-% toc
-%  [featuredescriptions, featurelocations] = calculateSIFTDescriptor(GLA,Locaciones,dominantDirections);
+% [featuredescriptions, featurelocations] = calculateSIFTDescriptor(GLA,Locaciones,dominantDirections);
 % tiempo = toc;
 % disp(['Tiempo en descriptores = ' num2str(tiempo)]);
 

@@ -1,15 +1,19 @@
-function[finalpositions]= harrisCornerRejection(LLA,rows,cols,length1,octavecount,locations,minlevel,maxlevel)
+function[finalpositions]= harrisCornerRejection(LLA,octavecount,LLKP,minlevel)
             
-            finalpositions = zeros(rows, cols, length1, octavecount);
+            finalpositions = {};
             
             for octave = 1 : octavecount   
                 array = LLA{octave};
+                KP=LLKP{octave};
+                [rows,cols,maxlevel]=size(KP);
                 
-                for centerlevel = minlevel + 1 : maxlevel - 1    
+                P=zeros(rows,cols,maxlevel);
+                
+                for centerlevel = minlevel + 1 : maxlevel   
                     %disp(['at level ' num2str(centerlevel) ' of octave ' num2str(octave)]);
                     
                     %find the points at that octave and scale, Find row,col coords.
-                    [r,c] = find(locations(:,:,centerlevel, octave));
+                    [r,c] = find(KP(:,:,centerlevel));
                     
                     [Dxx, Dxy, Dyy] = findDerivatives(array, centerlevel);
                     %                     disp(Dxx);
@@ -30,12 +34,15 @@ function[finalpositions]= harrisCornerRejection(LLA,rows,cols,length1,octavecoun
                             end
                             %remove all the edges
                             if abs(ratio) <= 2
-                                finalpositions(i,j, centerlevel ,octave)=1;
+                                P(i,j, centerlevel )=1;
                             end
                         end
                     end
                     
                 end
+                
+                finalpositions{end+1}=P;
+                
             end
             
         end
