@@ -1,10 +1,11 @@
-close all
-Imagen=rgb2gray(imread('nutrioliN.jpg'));
+close all;
+clc;
+Imagen=rgb2gray(imread('input_0.png'));
 [features1, featurelocations1] = obtenerSift(Imagen);
-Imagen2=rgb2gray(imread('nutrioli_O.jpg'));
+Imagen2=rgb2gray(imread('input_1.png'));
 [features2, featurelocations2] = obtenerSift(Imagen2);
-indexPairs = compareSIFTDescriptors(features1,features2);
-%indexPairs = matchFeatures(features1,features2);
+%indexPairs = compareSIFTDescriptors(features1,features2);
+indexPairs = matchFeatures(features1,features2);
 matchedPoints1 = featurelocations1(indexPairs(:,1),:);
 matchedPoints2 = featurelocations2(indexPairs(:,2),:);
 figure; ax = axes;
