@@ -1,19 +1,24 @@
 function [featuredescriptions,featurelocations]= obtenerSift(Imagen)
     
 tic;
+
+    %Valores independientes
     sigma=1.6;
-    sigmaValue=sigma;
     kvalue=sqrt(2);
     minlevel=1;
-    maxlevel=4;
+    levels = 2;
     octavas=5;
-    length1=3;
+    
+    %Valores dependientes
+    sigmaValue=sigma;
+    maxlevel=minlevel+levels;
+    
     F=Imagen;
     [H,W]=size(F);
     featuredescriptions=[];
     Locaciones=[];
     numGaussianas = maxlevel+2;
-    numLaplacianos = numGaussianas-1;
+    numLaplacianos = maxlevel+1;
     %Obteniendo la Primera Octava
     GL1=zeros(numGaussianas,H,W);
    
@@ -105,7 +110,7 @@ minQuality=.3;
     LL1=(1/(LLmax-LLmin))*(LL1-LLmin);
     LL1KP=zeros(H,W,4);
     mostrarLL1KP=cornerPoints([1,1]);
-    for i=1:4
+    for i=1:maxlevel
         aux=reshape(LL1(i,:,:),size(F));
         aux2=detectFASTFeatures(aux,'MinQuality',minQuality,'MinContrast',minContrast);
 %         aux2=selectStrongest(aux2,5);   
@@ -126,7 +131,7 @@ minQuality=.3;
     LL2=(1/(LLmax-LLmin))*(LL2-LLmin);
     LL2KP=zeros(H2,W2,4);
     mostrarLL2KP=cornerPoints([1,1]);
-    for i=1:4
+    for i=1:maxlevel
         aux=reshape(LL2(i,:,:),size(F2));
         aux2=detectFASTFeatures(aux,'MinQuality',minQuality,'MinContrast',minContrast);
 %         aux2=selectStrongest(aux2,5);  
@@ -147,7 +152,7 @@ minQuality=.3;
     LL3=(1/(LLmax-LLmin))*(LL3-LLmin);
     LL3KP=zeros(H3,W3,4);
     mostrarLL3KP=cornerPoints([1,1]);
-    for i=1:4
+    for i=1:maxlevel
         aux=reshape(LL3(i,:,:),size(F3));
         aux2=detectFASTFeatures(aux,'MinQuality',minQuality,'MinContrast',minContrast);
 %          aux2=selectStrongest(aux2,5);  
@@ -168,7 +173,7 @@ minQuality=.3;
     LL4=(1/(LLmax-LLmin))*(LL4-LLmin);
     LL4KP=zeros(H4,W4,4);
     mostrarLL4KP=cornerPoints([1,1]);
-    for i=1:4
+    for i=1:maxlevel
         aux=reshape(LL4(i,:,:),size(F4));
         aux2=detectFASTFeatures(aux,'MinQuality',minQuality,'MinContrast',minContrast);
 %          aux2=selectStrongest(aux2,5); 
@@ -188,7 +193,7 @@ minQuality=.3;
     LL5=(1/(LLmax-LLmin))*(LL5-LLmin);
     LL5KP=zeros(H5,W5,4);
     mostrarLL5KP=cornerPoints([1,1]);
-    for i=1:4
+    for i=1:maxlevel
         aux=reshape(LL5(i,:,:),size(F5));
         aux2=detectFASTFeatures(aux,'MinQuality',minQuality,'MinContrast',minContrast);
 %          aux2=selectStrongest(aux2,5); 
@@ -217,83 +222,54 @@ minQuality=.3;
 % 
 % [featuredescriptions,Locaciones] = extractFeatures(Imagen,Puntos);
 
-% [~,HL1,WL1]=size(LL1);
-% LL1KP=zeros(HL1,WL1,3);
-% octava=1;
-% for centerlevel = minlevel+1 : maxlevel
-%     [x,y] = findExtremaFast(LL1,WL1,HL1,centerlevel);
-%     for i=1 :size(x,1)
-%         LL1KP(x(i,1),y(i,1),centerlevel)=1;
+KP={LL1KP,LL2KP,LL3KP,LL4KP,LL5KP};
+LLA={LL1,LL2,LL3,LL4,LL5};
+GLA={GL1,GL2,GL3,GL4,GL5};
+%% Codigo para obtener nuestros puntos
+% KP={};
+% for octave = 1 : octavas   
+%     array = LLA{octave};
+%     [~,HL,WL]=size(array);
+%     LLKP=zeros(HL,WL,levels);
+%                 
+%     for centerlevel = minlevel+1 : maxlevel
+%         for i = 2: HL - 1
+%             for j = 2: WL -1
+%                 if findextrema2(LL1, i, j, centerlevel) == 1
+%                     LLKP(i,j, centerlevel) = 1;
+%                 end
+%             end
+%         end
 %     end
+%     KP{end+1}=LLKP;
 % end
 % 
-% [~,HL2,WL2]=size(LL2);
-% octava=2;
-% LL2KP=zeros(HL2,WL2,3);
-% for centerlevel = minlevel+1 : maxlevel
-%     [x,y] = findExtremaFast(LL2,WL2,HL2,centerlevel);
-%     for i=1 :size(x,1)
-%         LL2KP(x(i,1),y(i,1),centerlevel)=1;
-%     end
-% end
-% 
-% [~,HL3,WL3]=size(LL3);
-% octava=3;
-% LL3KP=zeros(HL3,WL3,3);
-% for centerlevel = minlevel+1 : maxlevel
-%     [x,y] = findExtremaFast(LL3,WL3,HL3,centerlevel);
-%     for i=1 :size(x,1)
-%         LL3KP(x(i,1),y(i,1),centerlevel)=1;
-%     end
-% end
-% 
-% [~,HL4,WL4]=size(LL4);
-% octava=4;
-% LL4KP=zeros(HL4,WL4,3);
-% for centerlevel = minlevel+1 : maxlevel
-%     [x,y] = findExtremaFast(LL4,WL4,HL4,centerlevel);
-%     for i=1 :size(x,1)
-%         LL4KP(x(i,1),y(i,1),centerlevel)=1;
-%     end
-% end
-% 
-% [~,HL5,WL5]=size(LL5);
-% octava=5;
-% LL5KP=zeros(HL5,WL5,3);
-% for centerlevel = minlevel+1 : maxlevel
-%     [x,y] = findExtremaFast(LL5,WL5,HL5,centerlevel);
-%     for i=1 :size(x,1)
-%         LL5KP(x(i,1),y(i,1),centerlevel)=1;
-%     end
-% end
+% tiempo = toc;
+% disp(['Tiempo en keypoints = ' num2str(tiempo)]);
 
-% imagenes={F, F2, F3, F4};
-% displayKeypoints(imagenes,locations, octavas,minlevel,maxlevel,length1);
-% toc
+
 % 
 % %---------------------------------------------------------------
 % % Outlier rejection
 % %-------------------------------------------------------
-LLA={LL1,LL2,LL3,LL4,LL5};
-KP={LL1KP,LL2KP,LL3KP,LL4KP,LL5KP};
-GLA={GL1,GL2,GL3,GL4,GL5};
+
 % 
 % 
-% [Locaciones] = harrisCornerRejection(LLA,H,W,length1,octavas,locations,minlevel,maxlevel);
-% 
-% toc
+%[KP] = harrisCornerRejection(LLA,octavas,KP,minlevel);
+%tiempo = toc;
+%disp(['Tiempo en harris = ' num2str(tiempo)]);
 % 
 % displayKeypoints(imagenes, Locaciones, octavas,minlevel,maxlevel,length1);
 
-[dominantDirections, Locaciones]= calculateDominantOrientation(octavas,minlevel,maxlevel,GLA,KP);
-tiempo = toc;
-disp(['Tiempo en orientacion = ' num2str(tiempo)]);
+% [dominantDirections, Locaciones]= calculateDominantOrientation(octavas,minlevel,GLA,KP);
+% tiempo = toc;
+% disp(['Tiempo en orientacion = ' num2str(tiempo)]);
 
 % displayKeypointsDirections(F,dominantDirections,Locaciones);
 % toc
-[featuredescriptions, featurelocations] = calculateSIFTDescriptor(GLA,Locaciones,dominantDirections);
-tiempo = toc;
-disp(['Tiempo en descriptores = ' num2str(tiempo)]);
+%  [featuredescriptions, featurelocations] = calculateSIFTDescriptor(GLA,Locaciones,dominantDirections);
+% tiempo = toc;
+% disp(['Tiempo en descriptores = ' num2str(tiempo)]);
 
 c1=mostrarLL1KP.Count;
 c2=mostrarLL2KP.Count;
@@ -309,10 +285,35 @@ Locaciones= [mostrarLL1KP(2:c1).Location;
  [cuenta,~]=size(Locaciones);
  
  
- %[featuredescriptions, featurelocations] =extractFeatures(Imagen,Locaciones);
+ [featuredescriptions, featurelocations] =extractFeatures(Imagen,Locaciones);
 
  figure
  imshow(Imagen)
+%% Codigo para mostrar nuestros puntos
+%  for octava=1:octavas
+%       P=KP{octava};
+%       
+%      for level=minlevel+1:maxlevel
+%          
+%             [~,~,numLevels]=size(P);
+%             if level > numLevels
+%                 break;
+%             end
+%          
+%           [r,c]=find(P(:,:,level));
+%           [length1,~] = size(r);
+%             
+%             for k = 1 : length1
+%                 y = r(k);
+%                 x = c(k);
+%                 hold on
+%                 plot(x,y,'r*') 
+%             end
+%      end
+%  end
+
+%% Codigo para mostrar los puntos de surf
+ 
  for a=1:cuenta  
      hold on
  plot(Locaciones(a,1),Locaciones(a,2),'r*')
