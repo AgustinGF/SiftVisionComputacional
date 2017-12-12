@@ -5,8 +5,14 @@ dominantDirections = [];
     for octave = 1 : octavecount   
          GL=GLA{octave};
          [~,rows,cols]=size(GL);
-       for centerlevel = minlevel : maxlevel      
+       for centerlevel = minlevel : maxlevel    
             KP=LLKP{octave};
+            
+            [~,~,numLevels]=size(KP);
+            if centerlevel > numLevels
+                break;
+            end
+            
             [r,c]=find(KP(:,:,centerlevel));
             [length1,~] = size(r);
             level=centerlevel; 

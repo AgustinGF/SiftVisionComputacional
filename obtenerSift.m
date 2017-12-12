@@ -295,27 +295,27 @@ disp(['Tiempo en orientacion = ' num2str(tiempo)]);
 tiempo = toc;
 disp(['Tiempo en descriptores = ' num2str(tiempo)]);
 
-% c1=mostrarLL1KP.Count;
-% c2=mostrarLL2KP.Count;
-% c3=mostrarLL3KP.Count;
-% c4=mostrarLL4KP.Count;
-% c5=mostrarLL5KP.Count;
-% 
-% Locaciones= [mostrarLL1KP(2:c1).Location;
-%              mostrarLL2KP(2:c2).Location*2; 
-%              mostrarLL3KP(2:c3).Location*4; 
-%              mostrarLL4KP(2:c4).Location*8;
-%              mostrarLL5KP(2:c5).Location*16];
-%  [cuenta,~]=size(Locaciones);
+c1=mostrarLL1KP.Count;
+c2=mostrarLL2KP.Count;
+c3=mostrarLL3KP.Count;
+c4=mostrarLL4KP.Count;
+c5=mostrarLL5KP.Count;
+
+Locaciones= [mostrarLL1KP(2:c1).Location;
+             mostrarLL2KP(2:c2).Location*2; 
+             mostrarLL3KP(2:c3).Location*4; 
+             mostrarLL4KP(2:c4).Location*8;
+             mostrarLL5KP(2:c5).Location*16];
+ [cuenta,~]=size(Locaciones);
  
  
  %[featuredescriptions, featurelocations] =extractFeatures(Imagen,Locaciones);
 
-%  figure
-%  imshow(Imagen)
-%  for a=1:cuenta  
-%      hold on
-%  plot(Locaciones(a,1),Locaciones(a,2),'r*')
-%  end
+ figure
+ imshow(Imagen)
+ for a=1:cuenta  
+     hold on
+ plot(Locaciones(a,1),Locaciones(a,2),'r*')
+ end
     toc
 end
