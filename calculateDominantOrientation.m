@@ -1,13 +1,12 @@
-function [dominantDirections, Locaciones] = calculateDominantOrientation(octavecount,minlevel,GLA,LLKP)
+function [dominantDirections, Locaciones] = calculateDominantOrientation(octavecount,minlevel,maxlevel,GLA,LLKP)
 Locaciones=[];
 dominantDirections = [];
            
     for octave = 1 : octavecount   
          GL=GLA{octave};
          [~,rows,cols]=size(GL);
-         KP=LLKP{octave};
-         [~,~,maxlevel]=size(KP);
-       for centerlevel = minlevel : maxlevel    
+          KP=LLKP{octave};
+       for centerlevel = minlevel+1 : maxlevel-1
             
             [r,c]=find(KP(:,:,centerlevel));
             [length1,~] = size(r);
@@ -40,10 +39,10 @@ dominantDirections = [];
             delta = 2 - n1;
             n2 = n2 + delta;
             n1 = 2;
-            elseif n2 > cols - 2
-               delta = n2 - cols + 1;
-               n1 = n1 - delta;
-               n2 = cols - 1;
+         elseif n2 > cols - 2
+            delta = n2 - cols + 1;
+            n1 = n1 - delta;
+            n2 = cols - 1;
          end
          for i = m1 : m2
             magnitudes1 = [];

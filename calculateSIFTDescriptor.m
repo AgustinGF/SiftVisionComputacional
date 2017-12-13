@@ -4,6 +4,11 @@ function [featuredescriptions, featurelocations] =calculateSIFTDescriptor(GLA,LL
 %             index= 1;
             featurelocations = [];
             
+            [hayKP,~,~,~] = size(LLKP)
+            if hayKP==0
+                return;
+            end
+            
 %             for octave = 1 : octavecount
 %                  GL=GLA{octave};
 %                  [~,rows,cols]=size(GL);
@@ -47,6 +52,9 @@ function [featuredescriptions, featurelocations] =calculateSIFTDescriptor(GLA,LL
                         elseif n2 > cols - 2
                             delta = n2 - cols + 1;
                             n1 = n1 - delta;
+                            if n1==0
+                                here;
+                            end
                             n2 = cols - 1;
                         end
                         
@@ -70,6 +78,10 @@ function [featuredescriptions, featurelocations] =calculateSIFTDescriptor(GLA,LL
                                         
                                         i = mvalue + a - 1;
                                         j = nvalue + b - 1;
+                                        
+                                        if j==0
+                                            here;
+                                        end
                                         
                                         %calculate magnitude and orientation
                                         magnitude = calculateMagnitude(GL, i, j, level);
