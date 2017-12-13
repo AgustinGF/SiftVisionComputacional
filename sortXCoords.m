@@ -11,10 +11,10 @@ function [sortedX] = sortXCoords(I, lines)
     % Quita coordenadas X detectadas en el mismo eje, o que estan muy cerca
     tol = 100;
     sortedX = fullSortedX;
-    for k = length(fullSortedX):-1:2
-        if (fullSortedX(k) == fullSortedX(k-1))
+    for k = length(fullSortedX)-1:-1:1
+        if (fullSortedX(k) == fullSortedX(k+1))
             sortedX(k) = [];
-        else if (fullSortedX(k) - fullSortedX(k-1)<tol)
+        else if (fullSortedX(k+1) - fullSortedX(k) <tol)
             sortedX(k) = [];
         end
     end

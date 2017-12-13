@@ -5,9 +5,9 @@ function [products,posProductos] = splitByProduct(shelfs, draw)
     posProductos={[3,1]};
     for i=5:5
         IS = shelfs{i};
-        IS = imadjust(I,[0 0.7],[]);
+        IS = imadjust(IS,[0 0.7],[]);
         [IH,IW] = size(IS);
-        I = imcrop(I,[1 IH/2 IW 300]);
+        I = imcrop(IS,[1 IH/2 IW 300]);
         
         BW = edge(I,'canny');   % Filtro detector de bordes.
         figure();
