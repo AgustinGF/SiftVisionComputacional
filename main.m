@@ -4,7 +4,10 @@ close all;
 clc;
 clear;
 
+tic;
+
 Estante = rgb2gray(imread('0grados_no_luz.jpg'));
+
 Nutrioli=rgb2gray(imread('nutrioliO.jpg'));
 Penafiel=rgb2gray(imread('penafielO.jpg'));
 Jumex=rgb2gray(imread('jumexO.jpg'));
@@ -20,8 +23,7 @@ end
 % Obtiene los estantes.
 [shelfs,posshelf] = splitByShelf(Estante,false);
 
-% Obtiene los productos
-[productos,posProductos] = splitByProduct(shelfs,true);
+[productos,posProductos] = splitByProduct(shelfs,false);
 
 % Dibuja estantes.
 figure;
@@ -35,15 +37,26 @@ end
 featuresProducto={};
 featureLocationsProducto={};
 for i =1:length(productos)
-    [featuresProducto{i}, featureLocationsProducto{i}] = obtenerSift(productos{i});
+
+    producto = productos{i};
+    [PH,PW] = size(productos{i});
+    if PW <200
+        producto = imresize(productos{i},2);
+    end
+    [featuresProducto{i}, featureLocationsProducto{i}] = obtenerSift(producto);
 end
 
-
+% Realizar los matches
 index = zeros(1,length(productos));
 max = zeros(1,length(productos));
 for j=1:length(Originales)
     for i =1:length(productos)
+        if isempty(featuresProducto{i})
+            continue;
+        end
         indexPairs = matchFeatures(featuresOriginal{j},featuresProducto{i},'Unique',true);
+        %indexPairs = compareSIFTDescriptors(featuresOriginal{j},featuresProducto{i});
+
         [matched,~] = size(indexPairs);
         if matched==0
             continue;
@@ -91,4 +104,8 @@ for i=1:length(productos)
     end
     
 end
+hold off;
+
+tiempo = toc;
+disp(['Tiempo total = ' num2str(tiempo)]);
     

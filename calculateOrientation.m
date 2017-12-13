@@ -1,6 +1,7 @@
 function[orientation] = calculateOrientation(GL, i, j, centerlevel)
             dx = GL(centerlevel,i+1,j)-GL(centerlevel,i-1,j);
             dy = GL(centerlevel,i,j+1)-GL(centerlevel,i,j-1);
+            
             if dx == 0
                 if dy == 0
                     dx = 100000;

@@ -2,20 +2,22 @@
 function [products,posProductos] = splitByProduct(shelfs, draw)
 
     products={};
-    posProductos={[1,1]};
-    for i=1:length(shelfs)
-        I = shelfs{i};
-        [IH,IW] = size(I);
-        I = imcrop(I,[1 IH/3 IW IH]);
+    posProductos={[3,1]};
+    for i=5:5
+        IS = shelfs{i};
+        [IH,IW] = size(IS);
+        I = imcrop(IS,[1 IH/3 IW IH]);
         
-        BW = edge(I,'canny');   % Filtro detector de bordes.
+        BW = edge(I,'canny',.3,1.6);   % Filtro detector de bordes.
+        figure();
+        imshow(BW);
 
         [H,T,R] = hough(BW,'Theta',0);
 
-        % Encuentra los puntos característicos destacables.
+        % Encuentra los puntos caracterÃ­sticos destacables.
         P  = houghpeaks(H,20,'threshold',ceil(0.3*max(H(:))));
 
-        % Encuentra líneas (divisiones de estantes).
+        % Encuentra lÃ­neas (divisiones de estantes).
         lines = houghlines(BW,T,R,P,'FillGap',200,'MinLength',10);
         
 %         figure, imshow(I), hold on
@@ -43,9 +45,12 @@ function [products,posProductos] = splitByProduct(shelfs, draw)
 
         % Obtiene los productos.
         for k = 2:length(sortedX)
-            imagenProducto = I(1:size(I,1),sortedX(k-1)+1:sortedX(k),1);
-            products{end+1} = imresize(imagenProducto,1);
+            imagenProducto = IS(1:size(IS,1),sortedX(k-1)+1:sortedX(k),1);
+            products{end+1} = imagenProducto;
             posProductos{end+1} = [i sortedX(k)];
+            figure();
+            imshow(imagenProducto);
+
         end
         
         figure();
