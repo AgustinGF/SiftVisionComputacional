@@ -8,10 +8,13 @@ function [sortedX] = sortXCoords(I, lines)
     fullSortedX(length(fullSortedX) + 1) = size(I,1);   % Agrega coordenada inferior.
     fullSortedX = sort(fullSortedX);
 
-    % Quita coordenadas X detectadas en el mismo eje.
+    % Quita coordenadas X detectadas en el mismo eje, o que estan muy cerca
+    tol = 100;
     sortedX = fullSortedX;
     for k = length(fullSortedX):-1:2
         if (fullSortedX(k) == fullSortedX(k-1))
+            sortedX(k) = [];
+        else if (fullSortedX(k) - fullSortedX(k-1)<tol)
             sortedX(k) = [];
         end
     end
