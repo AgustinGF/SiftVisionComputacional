@@ -14,10 +14,10 @@ function [products,posProductos] = splitByProduct(shelfs, draw)
 
         [H,T,R] = hough(BW,'Theta',0);
 
-        % Encuentra los puntos característicos destacables.
+        % Encuentra los puntos caracterÃ­sticos destacables.
         P  = houghpeaks(H,20,'threshold',ceil(0.3*max(H(:))));
 
-        % Encuentra líneas (divisiones de estantes).
+        % Encuentra lÃ­neas (divisiones de estantes).
         lines = houghlines(BW,T,R,P,'FillGap',200,'MinLength',10);
         
 %         figure, imshow(I), hold on
@@ -50,6 +50,7 @@ function [products,posProductos] = splitByProduct(shelfs, draw)
             posProductos{end+1} = [i sortedX(k)];
             figure();
             imshow(imagenProducto);
+
         end
         
         figure();

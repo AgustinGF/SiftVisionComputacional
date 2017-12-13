@@ -23,7 +23,6 @@ end
 % Obtiene los estantes.
 [shelfs,posshelf] = splitByShelf(Estante,false);
 
-% Obtiene los productos
 [productos,posProductos] = splitByProduct(shelfs,false);
 
 % Dibuja estantes.
@@ -38,6 +37,7 @@ end
 featuresProducto={};
 featureLocationsProducto={};
 for i =1:length(productos)
+
     producto = productos{i};
     [PH,PW] = size(productos{i});
     if PW <200
@@ -56,6 +56,7 @@ for j=1:length(Originales)
         end
         indexPairs = matchFeatures(featuresOriginal{j},featuresProducto{i},'Unique',true);
         %indexPairs = compareSIFTDescriptors(featuresOriginal{j},featuresProducto{i});
+
         [matched,~] = size(indexPairs);
         if matched==0
             continue;
@@ -66,7 +67,7 @@ for j=1:length(Originales)
     %     showMatchedFeatures(Producto,productos{i},matchedPoints1,matchedPoints2,'montage','Parent',ax);
     %     title(ax, 'Candidate point matches');
     %     legend(ax, 'Matched points 1','Matched points 2');
-    
+
         if matched>max(1,i)
             max(1,i) = matched;
             index(1,i) = j;
