@@ -231,45 +231,28 @@ minQuality=.2;
 % 
 % [featuredescriptions,Locaciones] = extractFeatures(Imagen,Puntos);
 
-% [~,HL1,WL1]=size(LL1);
-% octava=1;
-% for centerlevel = minlevel+1 : maxlevel-1
-%     [x,y] = findExtremaFast(LL1,WL1,HL1,centerlevel);
-%     for i=1 :size(x,1)
-%         locations(x(i,1),y(i,1),centerlevel,octava)=1;
+%% Codigo para obtener nuestros puntos
+% KP={};
+% for octave = 1 : octavas   
+%     array = LLA{octave};
+%     [~,HL,WL]=size(array);
+%     LLKP=zeros(HL,WL,4);
+%                 
+%     for centerlevel = minlevel+1 : maxlevel-1
+%         for i = 2: HL - 1
+%             for j = 2: WL -1
+%                 if findextrema(LL1, i, j, centerlevel) == 1
+%                     LLKP(i,j, centerlevel) = 1;
+%                 end
+%             end
+%         end
 %     end
+%     KP{end+1}=LLKP;
 % end
 % 
-% [~,HL2,WL2]=size(LL2);
-% octava=2;
-% for centerlevel = minlevel+1 : maxlevel-1
-%     [x,y] = findExtremaFast(LL2,WL2,HL2,centerlevel);
-%     for i=1 :size(x,1)
-%         locations(x(i,1),y(i,1),centerlevel,octava)=1;
-%     end
-% end
-% 
-% [~,HL3,WL3]=size(LL3);
-% octava=3;
-% for centerlevel = minlevel+1 : maxlevel-1
-%     [x,y] = findExtremaFast(LL3,WL3,HL3,centerlevel);
-%     for i=1 :size(x,1)
-%         locations(x(i,1),y(i,1),centerlevel,octava)=1;
-%     end
-% end
-% 
-% [~,HL4,WL4]=size(LL4);
-% octava=4;
-% for centerlevel = minlevel+1 : maxlevel-1
-%     [x,y] = findExtremaFast(LL4,WL4,HL4,centerlevel);
-%     for i=1 :size(x,1)
-%         locations(x(i,1),y(i,1),centerlevel,octava)=1;
-%     end
-% end
-% 
-% imagenes={F, F2, F3, F4};
-% displayKeypoints(imagenes,locations, octavas,minlevel,maxlevel,length1);
-% toc
+% tiempo = toc;;
+% disp(['Tiempo en keypoints = ' num2str(tiempo)])
+
 % 
 % %---------------------------------------------------------------
 % % Outlier rejection
@@ -279,9 +262,8 @@ KP={LL1KP,LL2KP,LL3KP,LL4KP};
 GLA={GL1,GL2,GL3,GL4};
 % 
 % 
-% [Locaciones] = harrisCornerRejection(LLA,H,W,length1,octavas,locations,minlevel,maxlevel);
+% [KP] = harrisCornerRejection(LLA,octavas,KP,minlevel,maxlevel);
 % 
-% toc
 % 
 % displayKeypoints(imagenes, Locaciones, octavas,minlevel,maxlevel,length1);
 
@@ -319,6 +301,29 @@ Locaciones = [mostrarLL1KP(2:c1).Location;
 % [cuenta,~]=size(featurelocations);
 %  figure
 %  imshow(F)
+%% Codigo para mostrar nuestros puntos
+%  for octava=1:octavas
+%       P=KP{octava};
+%       
+%      for level=minlevel+1:maxlevel-1
+%          
+%             [~,~,numLevels]=size(P);
+%             if level > numLevels
+%                 break;
+%             end
+%          
+%           [r,c]=find(P(:,:,level));
+%           [length1,~] = size(r);
+%             
+%             for k = 1 : length1
+%                 y = r(k);
+%                 x = c(k);
+%                 hold on
+%                 plot(x,y,'r*') 
+%             end
+%      end
+%  end
+%% Codigo para mostrar otro formato de puntos
 %  for a=1:cuenta  
 %      hold on
 %  plot(featurelocations(a,1),featurelocations(a,2),'r*')
