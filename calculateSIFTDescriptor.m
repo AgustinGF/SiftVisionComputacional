@@ -1,24 +1,26 @@
 function [featuredescriptions, featurelocations] =calculateSIFTDescriptor(GLA,LLKP,dominantDirections)
+            kvalue=sqrt(2);
             
-            featuredescriptions = [];
 %             index= 1;
-            featurelocations = [];
-            
-            [hayKP,~,~,~] = size(LLKP)
-            if hayKP==0
-                return;
-            end
-            
+                    [haykp,~,~,~]= size(LLKP);
+                    if haykp==0
+                        featuredescriptions = [];
+                        featurelocations = [];
+                        return; 
+                    end
 %             for octave = 1 : octavecount
 %                  GL=GLA{octave};
 %                  [~,rows,cols]=size(GL);
 %                 for centerlevel = minlevel : maxlevel - 1
                     r= LLKP(:,1);
                     c= LLKP(:,2);
+                    featuredescriptions = zeros(haykp,128);
+                    featurelocations = zeros(haykp,2);
                     [length1,~] = size(r);
 %         for level=2:3
                     %do edge outliers
                     for k = 1 : length1
+                        k2=1;
                         centerlevel=LLKP(k,3);
                         level=centerlevel;
                         octave=LLKP(k,4);
@@ -52,9 +54,6 @@ function [featuredescriptions, featurelocations] =calculateSIFTDescriptor(GLA,LL
                         elseif n2 > cols - 2
                             delta = n2 - cols + 1;
                             n1 = n1 - delta;
-                            if n1==0
-                                here;
-                            end
                             n2 = cols - 1;
                         end
                         
@@ -66,38 +65,34 @@ function [featuredescriptions, featurelocations] =calculateSIFTDescriptor(GLA,LL
                                 mvalue = m1 + (4 * (m-1));
                                 nvalue = n1 + (4 * (n-1));
                                 
-                                magnitudes = [];
-                                orientations = [];
+                                magnitudes = zeros(4,4);
+                                orientations = zeros(4,4);
                                 
                                 %calculate for 4x4 block
                                 for a = 1: 4
-                                    magnitudes1 = [];
-                                    orientations1 = [];
+                                    magnitudes1 = zeros(1,4);
+                                    orientations1 = zeros(1,4);
                                     
                                     for b = 1:4
                                         
                                         i = mvalue + a - 1;
                                         j = nvalue + b - 1;
                                         
-                                        if j==0
-                                            here;
-                                        end
-                                        
                                         %calculate magnitude and orientation
                                         magnitude = calculateMagnitude(GL, i, j, level);
-                                        magnitudes1 =[magnitudes1 magnitude];
+                                        magnitudes1(1,b) = magnitude;
                                         orientation = calculateOrientation(GL, i, j, level);
                                         dD = dominantDirections(k)*10;
                                         orientation = orientation - dD ;
                                         if orientation <= 0
                                             orientation= orientation + 360;
                                         end
-                                        orientations1 = [orientations1 orientation];
+                                        orientations1(1,b)= orientation;
                                         
                                     end
                                     
-                                    magnitudes =[magnitudes ;magnitudes1];
-                                    orientations = [orientations; orientations1];
+                                    magnitudes (a,:) = magnitudes1;
+                                    orientations (a,:)= orientations1;
                                 end
  
 
@@ -106,17 +101,20 @@ function [featuredescriptions, featurelocations] =calculateSIFTDescriptor(GLA,LL
                                 
                                 histogram = computeHistogram(8, magnitudes, orientations);
                                 
+                                [~,fin] = size(histogram);
                                             % Example Visualise:
 %                                 figure;
 %                                 bar(1*45:45:360, histogram)
 %                                 append to feature descriptor
-                                featuredescriptor = [featuredescriptor histogram];
+
+                                featuredescriptor(1,k2:k2+fin-1) = histogram;
+                                k2=k2+fin;
                             end
                         end
                         
                         %disp(featuredescriptor);
-                        featuredescriptions= [featuredescriptions ; featuredescriptor];
-                        featurelocations = [featurelocations; [locy*(2^(octave-1)),locx*(2^(octave-1))]];
+                        featuredescriptions(k,:)= featuredescriptor;
+                        featurelocations(k,:) = [locy*(2^(octave-1)),locx*(2^(octave-1))];
                         
 %                         index = index+1;
                     end
@@ -128,7 +126,7 @@ function [featuredescriptions, featurelocations] =calculateSIFTDescriptor(GLA,LL
             [length6, ~] = size(featuredescriptions);
             for i = 1 : length6
                 featuredescriptions(i,:) =  featuredescriptions(i,:)/norm(featuredescriptions(i,:));
-                featuredescriptions(i,find(featuredescriptions(i,:)) > 0.2) = 0;
+                featuredescriptions(i,find(featuredescriptions(i,:)) > 0.2) = .2;
                 featuredescriptions(i,:) =  featuredescriptions(i,:)/norm(featuredescriptions(i,:));
             end   
        

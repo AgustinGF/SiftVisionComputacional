@@ -1,6 +1,6 @@
 function [featuredescriptions,featurelocations]= obtenerSift(Imagen)
     
-tic;
+
     sigma=1.6;
     sigmaValue=sigma;
     kvalue=sqrt(2);
@@ -18,15 +18,24 @@ tic;
     for i=1:5
         GL1(i,:,:)= imgaussfilt(F,(kvalue^i)*sigma);
     end
-    GL1min=min(min(min(GL1)));
-    GL1max=max(max(max(GL1)));
-    GL1=(1/(GL1max-GL1min))*(GL1-GL1min);
-    
+    GLmin=min(min(min(GL1)));
+    GLmax=max(max(max(GL1)));
+    GL1=(1/(GLmax-GLmin))*(GL1-GLmin);
+
     %Laplacianos de primera Octava
     LL1=zeros(4,H,W);
     for i=1:4
         LL1(i,:,:)= GL1(i,:,:)-GL1(i+1,:,:);
     end
+%     figure
+%     subplot(2,2,1)
+%     imshow(reshape(LL1(1,:,:),size(F)))
+%     subplot(2,2,2)
+%     imshow(reshape(LL1(2,:,:),size(F)))
+%     subplot(2,2,3)
+%     imshow(reshape(LL1(3,:,:),size(F)))
+%     subplot(2,2,4)
+%     imshow(reshape(LL1(4,:,:),size(F)))
 %-------------------------------------------------
 %   Reescalamiento de la imagen
     Z2=griddedInterpolant(double(F));
@@ -39,15 +48,16 @@ tic;
     for i=1:5
         GL2(i,:,:)= imgaussfilt(F2,(kvalue^i)*sigma);
     end
-     GL2min=min(min(min(GL2)));
-    GL2max=max(max(max(GL2)));
-    GL2=(1/(GL2max-GL2min))*(GL2-GL2min);
     
+    GLmin=min(min(min(GL2)));
+    GLmax=max(max(max(GL2)));
+    GL2=(1/(GLmax-GLmin))*(GL2-GLmin);
 %   Laplacianos de Segunda Octava
     LL2=zeros(4,H2,W2);
     for i=1:4
         LL2(i,:,:)= GL2(i,:,:)-GL2(i+1,:,:);
     end
+
 %-----------------------------------------------------
 %   Reescalamiento de la imagen
     Z3=griddedInterpolant(double(F2));
@@ -60,15 +70,16 @@ tic;
     for i=1:5
         GL3(i,:,:)= imgaussfilt(F3,(kvalue^i)*sigma);
     end
-    GL3min=min(min(min(GL3)));
-    GL3max=max(max(max(GL3)));
-    GL3=(1/(GL3max-GL3min))*(GL3-GL3min);
     
+    GLmin=min(min(min(GL3)));
+    GLmax=max(max(max(GL3)));
+    GL3=(1/(GLmax-GLmin))*(GL3-GLmin);
 %   Laplacianos de Tercera Octava
     LL3=zeros(4,H3,W3);
     for i=1:4
         LL3(i,:,:)= GL3(i,:,:)-GL3(i+1,:,:);
     end
+
 %-----------------------------------------------------------
 %   Reescalamiento de la imagen
     Z4=griddedInterpolant(double(F3));
@@ -79,22 +90,39 @@ tic;
 %   Obteniendo la Cuarta Octava
     GL4=zeros(5,H4,W4);
     for i=1:5
-        GL4(i,:,:)= imgaussfilt(F4,(kvalue^i)*sigma);
+        GL4(i,:,:)=imgaussfilt(F4,(kvalue^i)*sigma);
     end
-    GL4min=min(min(min(GL4)));
-    GL4max=max(max(max(GL4)));
-    GL4=(1/(GL4max-GL4min))*(GL4-GL4min);
-    
+    GLmin=min(min(min(GL4)));
+    GLmax=max(max(max(GL4)));
+    GL4=(1/(GLmax-GLmin))*(GL4-GLmin);
 %   Laplacianos de Cuarta Octava
     LL4=zeros(4,H4,W4);
     for i=1:4
         LL4(i,:,:)= GL4(i,:,:)-GL4(i+1,:,:);
     end
+
+%-----------------------------------------------------------    
+% %   Reescalamiento de la imagen
+%     Z5=griddedInterpolant(double(F4));
+%     xQ=1:2:W4;
+%     yQ=1:2:H4;
+%     F5=uint8(Z5({yQ,xQ}));
+%     [H5,W5]=size(F5);
+% %   Obteniendo la Quinta Octava
+%     GL5=zeros(5,H5,W5);
+%     for i=1:5
+%         GL5(i,:,:)= imgaussfilt(F5,(kvalue^i)*sigma);
+%     end
+% %   Laplacianos de Quinta Octava
+%     LL5=zeros(4,H5,W5);
+%     for i=1:4
+%         LL5(i,:,:)= GL5(i,:,:)-GL5(i+1,:,:);
+%     end
 %-------------------------------------------------------------
-%   Obteniendo los puntos de inter?s
+%   Obteniendo los puntos de interés
 %---------------------------------------------------------------
-minContrast=.015;
-minQuality=.3;
+minContrast=.02;
+minQuality=.2;
 %1ra Octava
 %-------------------------------------------------------
 %     LLmin=min(min(min(LL1)));
@@ -168,6 +196,24 @@ minQuality=.3;
         end
         mostrarLL4KP=cat(2,mostrarLL4KP,aux2);
     end
+% %-------------------------------------------------------
+% %   5ta Octava
+% %-------------------------------------------------------
+%     LLmin=min(min(min(LL5)));
+%     LLmax=max(max(max(LL5)));
+%     LL5=(1/(LLmax-LLmin))*(LL5-LLmin);
+%     LL5KP=zeros(H5,W5,4);
+%     mostrarLL5KP=cornerPoints([1,1]);
+%     for i=1:4
+%         aux=reshape(LL5(i,:,:),size(F5));
+%         aux2=detectFASTFeatures(aux,'MinQuality',minQuality,'MinContrast',minContrast);
+% %          aux2=selectStrongest(aux2,5); 
+%         for j = 1 : aux2.Count
+%             x=aux2(j).Location;
+%             LL5KP(floor(x(2)),floor(x(1)),i)=1;
+%         end
+%         mostrarLL5KP=cat(2,mostrarLL5KP,aux2);
+%     end
 
 % Obteniendo los descriptores 
 % imshow(reshape(LL4KP(:,:,1),size(F4)))
@@ -240,31 +286,42 @@ GLA={GL1,GL2,GL3,GL4};
 % displayKeypoints(imagenes, Locaciones, octavas,minlevel,maxlevel,length1);
 
 [dominantDirections, Locaciones]= calculateDominantOrientation(octavas,minlevel,maxlevel,GLA,KP);
-% toc
-% displayKeypointsDirections(F,dominantDirections,Locaciones);
-% toc
-[featuredescriptions, featurelocations] = calculateSIFTDescriptor(GLA,Locaciones,dominantDirections);
-% toc
 
-% c1=mostrarLL1KP.Count;
-% c2=mostrarLL2KP.Count;
-% c3=mostrarLL3KP.Count;
-% c4=mostrarLL4KP.Count;
-% 
-% Locaciones= [mostrarLL1KP(2:c1).Location;
-%              mostrarLL2KP(2:c2).Location*2; 
-%              mostrarLL3KP(2:c3).Location*4; 
-%              mostrarLL4KP(2:c4).Location*8];
-%  [cuenta,~]=size(Locaciones);
+% displayKeypointsDirections(F,dominantDirections,Locaciones);
+
+[featuredescriptions, featurelocations] = calculateSIFTDescriptor(GLA,Locaciones,dominantDirections);
+
+
+c1=mostrarLL1KP.Count;
+c2=mostrarLL2KP.Count;
+c3=mostrarLL3KP.Count;
+c4=mostrarLL4KP.Count;
+
+Locaciones = [mostrarLL1KP(2:c1).Location;
+             mostrarLL2KP(2:c2).Location*2; 
+             mostrarLL3KP(2:c3).Location*(2^2); 
+             mostrarLL4KP(2:c4).Location*(2^3)];
+
+% [featuredescriptions, featurelocations] = [extractFeatures(reshape(GL1(1,:,:),size(F)), mostrarLL1KP(2:c1).Location);
+%              extractFeatures(reshape(GL2(1,:,:),size(F2)), mostrarLL2KP(2:c2).Location*2); 
+%              extractFeatures(reshape(GL3(1,:,:),size(F3)), mostrarLL3KP(2:c3).Location*4); 
+%              extractFeatures(reshape(GL4(1,:,:),size(F4)), mostrarLL4KP(2:c4).Location*8)];
  
+
  
- %[featuredescriptions, featurelocations] =extractFeatures(Imagen,Locaciones);
-% 
+% [featuredescriptions, featurelocations] =extractFeatures(F,Locaciones);
+
+% featurelocations = [mostrarLL1KP(2:c1).Location;
+%              mostrarLL2KP(2:c2).Location; 
+%              mostrarLL3KP(2:c3).Location; 
+%              mostrarLL4KP(2:c4).Location];
+ 
+% [cuenta,~]=size(featurelocations);
 %  figure
-%  imshow(Imagen)
+%  imshow(F)
 %  for a=1:cuenta  
 %      hold on
-%  plot(Locaciones(a,1),Locaciones(a,2),'r*')
+%  plot(featurelocations(a,1),featurelocations(a,2),'r*')
 %  end
 
 end
