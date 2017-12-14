@@ -3,13 +3,14 @@ function [products,posProductos] = splitByProduct(shelfs, draw)
 
     products={};
     posProductos={[3,1]};
+
     for i=5:5
         IS = shelfs{i};
         IS = imadjust(IS,[0 0.7],[]);
         [IH,IW] = size(IS);
         I = imcrop(IS,[1 IH/2 IW 300]);
         
-        BW = edge(I,'canny');   % Filtro detector de bordes.
+        BW = edge(I,'canny',.1,3);   % Filtro detector de bordes.
         figure();
         imshow(BW);
 
@@ -59,11 +60,20 @@ function [products,posProductos] = splitByProduct(shelfs, draw)
         hold on;
         if draw==1
              for k = 2:length(sortedX)
-                 height = IH;
-                line([sortedX(k-1) sortedX(k-1)],[1 height]);
+                plot([sortedX(k-1) sortedX(k-1)], [1, IH],'LineWidth',3,'Color','green');
             end
         end
 
        
+    end
+end
+
+function drawHoughLines(I, lines)
+    imshow(I), hold on
+    for k = 1:length(lines)
+       xy = [lines(k).point1; lines(k).point2];
+       plot(xy(:,1),xy(:,2),'LineWidth',1,'Color','green');
+       plot(xy(1,1),xy(1,2),'x','LineWidth',2,'Color','yellow');
+       plot(xy(2,1),xy(2,2),'x','LineWidth',2,'Color','red');
     end
 end

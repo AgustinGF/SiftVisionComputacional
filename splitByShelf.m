@@ -1,7 +1,9 @@
 % Divide la imagen por estante.
 function [shelf posshelf] = splitByShelf(I, draw)
 
-    BW = edge(I,'sobel');   % Filtro detector de bordes.
+    i1 = imadjust(I,[0.3 0.7],[]);
+    BW = edge(i1,'sobel');   % Filtro detector de bordes.
+
     [H,T,R] = hough(BW);    % Transformada de Hough.
 
     % Encuentra los puntos característicos destacables.
@@ -24,8 +26,17 @@ function [shelf posshelf] = splitByShelf(I, draw)
 
     % Dibuja el proceso.
     if(draw)
+        figure;
+        imshow(i1);
+
+        figure;
+        imshow(BW);
+
         % Dibuja líneas de Hough.
         drawHoughLines(I, lines);
+
+        figure;
+        drawSplits(I, sortedY);  
 
         % Dibuja estantes.
         figure;
@@ -33,5 +44,22 @@ function [shelf posshelf] = splitByShelf(I, draw)
             subplot(length(shelf),1,k);
             imshow(shelf{k});
         end
+    end
+end
+
+function drawSplits(I, Y)
+    imshow(I), hold on
+    for k = 2:length(Y)-1
+       plot([0,size(I,2)], [Y(k), Y(k)],'LineWidth',3,'Color','green');
+    end
+end
+
+function drawHoughLines(I, lines)
+    imshow(I), hold on
+    for k = 1:length(lines)
+       xy = [lines(k).point1; lines(k).point2];
+       plot(xy(:,1),xy(:,2),'LineWidth',1,'Color','green');
+       plot(xy(1,1),xy(1,2),'x','LineWidth',2,'Color','yellow');
+       plot(xy(2,1),xy(2,2),'x','LineWidth',2,'Color','red');
     end
 end
